@@ -2,6 +2,7 @@
   "TYPE" : "Workflow",
   "version" : "1.1.0",
   "timeZone" : "Etc/UTC",
+  "title" : "Fork processing in branches per country code",
   "orderPreparation" : {
     "parameters" : {
       "countries" : {

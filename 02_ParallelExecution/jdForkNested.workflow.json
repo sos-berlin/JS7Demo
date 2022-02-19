@@ -2,7 +2,7 @@
   "TYPE" : "Workflow",
   "version" : "1.1.0",
   "timeZone" : "Etc/UTC",
-  "title" : "Nested parallel execution of jobs in a workflow",
+  "title" : "Fork processing in a number of nested branches",
   "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdForkNested",
   "jobResourceNames" : [ "Default" ],
   "instructions" : [ {

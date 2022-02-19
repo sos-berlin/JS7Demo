@@ -59,7 +59,8 @@
       "skipIfNoAdmissionForOrderDay" : false,
       "parallelism" : 1,
       "graceTimeout" : 15,
-      "failOnErrWritten" : false
+      "failOnErrWritten" : false,
+      "title" : "Fork processing in two branches"
     },
     "job2_1a" : {
       "agentName" : "primaryAgent",
