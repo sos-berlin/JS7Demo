@@ -1,0 +1,8 @@
+{
+  "TYPE" : "Board",
+  "endOfLife" : "$js7EpochMilli + 3600000",
+  "expectOrderToNoticeId" : "replaceAll($js7OrderId, '^#([0-9]{4}-[0-9]{2}-[0-9]{2})#.*$', '$1')",
+  "version" : "1.1.0",
+  "title" : "Synchronize workflows by daily plan and order name",
+  "postOrderToNoticeId" : "replaceAll($js7OrderId, '^#([0-9]{4}-[0-9]{2}-[0-9]{2})#.*$', '$1')"
+}

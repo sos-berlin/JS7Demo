@@ -1,0 +1,48 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Send notification e-mail on success",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdNotificationSOSMailOnSuccess",
+  "jobResourceNames" : [ "Default", "eMailDefault" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "send-mail",
+    "label" : "send-mail"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nORDER_ID_URLENC=$(echo -n $JS7_ORDER_ID | od -An -tx1 | tr ' ' % | xargs printf \"%s\")\nWORKFLOW_NAME_URLENC=$(echo -n $JS7_WORKFLOW_NAME | od -An -tx1 | tr ' ' % | xargs printf \"%s\")\n\necho \"orderIdUrlEnc=$ORDER_ID_URLENC\" >> $JS7_RETURN_VALUES\necho \"workflowNameUrlEnc=$WORKFLOW_NAME_URLENC\" >> $JS7_RETURN_VALUES\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "send-mail" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.mail.MailJob",
+        "arguments" : {
+          "to" : "\"info@sos-berlin.com\"",
+          "body" : "\"<style type='text/css'>.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;} </style> \n<table class='tg'>\n \t<tbody>\n \t\t<tr>\n \t\t\t<th colspan='2'>JS7 JobScheduler</th>\n \t\t</tr>\n \t\t<tr>\n \t\t\t<td>Controller ID</td>\n \t\t\t<td>${js7ControllerId}</td>\n \t\t</tr>\n \t\t<tr>\n \t\t\t<th colspan='2'>Order</th>\n \t\t</tr>\n \t\t<tr>\n \t\t\t<td>Order ID</td>\n                        <td><a href='$(JobResource:Default:js7JocUrl)/joc/#/history/order?orderId=${orderIdUrlEnc}&workflow=${workflowNameUrlEnc}&controllerId=${js7ControllerId}'>${js7OrderId}</a></td>\n \t\t</tr>\n \t\t<tr>\n \t\t\t<td>Workflow</td>\n                        <td><a href='$(JobResource:Default:js7JocUrl)/joc/#/workflows/workflow?path=${workflowNameUrlEnc}&controllerId=${js7ControllerId}'>${js7WorkflowPath}</a></td>\n \t\t</tr>\n\t\t<tr>\n\t\t\t<td>Node Label</td>\n\t\t\t<td>${js7Label}</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Job</td>\n\t\t\t<td>${js7JobName}</td>\n\t\t</tr>\n \t</tbody> \n</table>\""
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "jobResourceNames" : [ "eMailOnSuccess" ],
+      "title" : "Send notification e-mail on success"
+    }
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Pick up files from file watching and execute workflow",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdFileWatchingFork",
+  "orderPreparation" : {
+    "parameters" : {
+      "file" : {
+        "type" : "String"
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Fork",
+    "branches" : [ {
+      "id" : "branch1",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1a",
+          "label" : "job2_1a"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1b",
+          "label" : "job2_1b"
+        } ]
+      }
+    }, {
+      "id" : "branch2",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2a",
+          "label" : "job2_2a"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2b",
+          "label" : "job2_2b"
+        } ]
+      }
+    } ],
+    "joinIfFailed" : false
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "job3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nif [ ! -f \"$FILE\" ]\nthen\n  echo \"----- file does not exist: $FILE\"\n  echo \"----- use workflow jdFileWatchingForkTouch to create files\"\n  exit 1\nfi\n\necho \"job running for incoming file: $FILE\"\n\nsleep 5",
+        "env" : {
+          "FILE" : "$file"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"removing incoming file: $FILE\"\nrm $FILE",
+        "env" : {
+          "FILE" : "$file"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

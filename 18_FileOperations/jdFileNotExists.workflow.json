@@ -1,0 +1,47 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "touch-file",
+    "label" : "touch-file"
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "file-not-exists",
+    "label" : "file-not-exists"
+  } ],
+  "jobs" : {
+    "touch-file" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"touching file: /tmp/$ORDER_ID.order.js7\"\ntouch /tmp/$ORDER_ID.order.js7\n",
+        "env" : {
+          "ORDER_ID" : "$js7OrderId"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "file-not-exists" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.file.FileNotExistsJob",
+        "arguments" : {
+          "source_file" : "\"/tmp/${js7OrderId}.order.js7.no-exists\""
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Checks if one or more files do not exist",
+      "documentationName" : "FileNotExistsJob"
+    }
+  }
+}

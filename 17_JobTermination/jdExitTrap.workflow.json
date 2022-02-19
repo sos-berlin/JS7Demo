@@ -1,0 +1,24 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "child-process-exit-trap",
+    "label" : "child-process-exit-trap"
+  } ],
+  "jobs" : {
+    "child-process-exit-trap" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\nJS7Trap()\n{\n    rc=$?\n    # wait for completion of child processes or let kill_task.sh clean up child processes\n    echo \"($(date +%T.%3N)) $(basename $0): JS7Trap for signal $1: waiting for completion of child processes ...\"\n    wait\n    echo \"($(date +%T.%3N)) $(basename $0): JS7Trap for signal $1: leaving trap, exit code $rc\"\n    exit $rc\n}\n\n# define trap for script completion\ntrap 'JS7Trap EXIT' EXIT\ntrap 'JS7Trap SIGTERM' SIGTERM\ntrap 'JS7Trap SIGINT' SIGINT\n\n# create three child processes\nsleep 100 &\nsleep 110 &\nsleep 120 &\n\n# this is what the script normally should do:\n#   echo \"waiting for completion of child processes\"\n#   wait\n\necho \"script completed\"\n",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

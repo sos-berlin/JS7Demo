@@ -1,0 +1,163 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Cycle",
+    "cycleWorkflow" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2",
+        "label" : "job2"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job3",
+        "label" : "job3"
+      } ]
+    },
+    "schedule" : {
+      "schemes" : [ {
+        "repeat" : {
+          "TYPE" : "Periodic",
+          "period" : 3600,
+          "offsets" : [ 600, 1800, 3000 ]
+        },
+        "admissionTimeScheme" : {
+          "periods" : [ {
+            "TYPE" : "DailyPeriod",
+            "secondOfDay" : 0,
+            "duration" : 21600
+          } ]
+        }
+      } ]
+    }
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job4",
+    "label" : "job4"
+  }, {
+    "TYPE" : "Cycle",
+    "cycleWorkflow" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job5",
+        "label" : "job5"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job6",
+        "label" : "job6"
+      } ]
+    },
+    "schedule" : {
+      "schemes" : [ {
+        "repeat" : {
+          "TYPE" : "Continuous",
+          "pause" : 1800,
+          "limit" : 10
+        },
+        "admissionTimeScheme" : {
+          "periods" : [ {
+            "TYPE" : "DailyPeriod",
+            "secondOfDay" : 28800,
+            "duration" : 7200
+          } ]
+        }
+      } ]
+    }
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job7",
+    "label" : "job7"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job4" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job5" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job6" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job7" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

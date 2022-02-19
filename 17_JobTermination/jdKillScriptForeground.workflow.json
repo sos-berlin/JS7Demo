@@ -1,0 +1,24 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "kill-child-process",
+    "label" : "kill-child-process"
+  } ],
+  "jobs" : {
+    "kill-child-process" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\nSHELL_SCRIPT=\"$HOME/test.sh\"\ncat << 'EOF' > $SHELL_SCRIPT\n#!/bin/bash\n\nsleep 120\nEOF\n\necho \"running shell script in foreground: $SHELL_SCRIPT\"\nchmod +x $SHELL_SCRIPT\n$SHELL_SCRIPT\n\necho \"script completed\"\n",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

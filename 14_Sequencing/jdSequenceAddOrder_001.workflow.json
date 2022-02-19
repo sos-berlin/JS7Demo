@@ -1,0 +1,67 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "First workflow in a sequence of workflows",
+  "orderPreparation" : {
+    "parameters" : {
+      "booking_code" : {
+        "type" : "String",
+        "default" : "\"BC45\""
+      },
+      "flight_destination" : {
+        "type" : "String",
+        "default" : "\"London\""
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job2",
+    "label" : "job2"
+  }, {
+    "TYPE" : "AddOrder",
+    "workflowName" : "jdSequenceReceiveOrder",
+    "arguments" : {
+      "booking_code" : "$booking_code",
+      "flight_destination" : "$flight_destination"
+    },
+    "remainWhenTerminated" : false
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"booking code: $BOOKING_CODE\"\necho \"flight destination: $FLIGHT_DESTINATION\"\n\nsleep 3",
+        "env" : {
+          "BOOKING_CODE" : "$booking_code",
+          "FLIGHT_DESTINATION" : "$flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 3",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

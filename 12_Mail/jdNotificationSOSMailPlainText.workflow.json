@@ -1,0 +1,32 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Send notification e-mail",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdNotificationSOSMailPlainText",
+  "jobResourceNames" : [ "Default", "eMailDefault" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "send-mail",
+    "label" : "send-mail"
+  } ],
+  "jobs" : {
+    "send-mail" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.mail.MailJob",
+        "arguments" : {
+          "to" : "\"info@sos-berlin.com\"",
+          "subject" : "\"JS7 JobScheduler Notification: Order ID $js7OrderId for Workflow $js7WorkflowPath\"",
+          "body" : "\"Hi,\n\nthis message is brought to you by the JS7 JobScheduler:\n\n* Controller ID: ${js7ControllerId}\n\n* Workflow: ${js7WorkflowPath}\n\n* Job: ${js7JobName}\n\n* Order ID: ${js7OrderId}\""
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Send notification e-mail"
+    }
+  }
+}

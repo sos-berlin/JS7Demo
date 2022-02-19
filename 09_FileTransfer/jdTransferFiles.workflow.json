@@ -1,0 +1,40 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Pick up files by File Watching and transfer files with YADE",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdTransferFiles",
+  "orderPreparation" : {
+    "parameters" : {
+      "file" : {
+        "type" : "String"
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "yade-transfer-file",
+    "label" : "move-transfer-file"
+  } ],
+  "jobs" : {
+    "yade-transfer-file" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nif [ ! -f \"$YADE_FILE_PATH\" ]\nthen\n  echo \"----- file does not exist: $YADE_FILE_PATH\"\n  echo \"----- use workflow jdCreateDemoYadeFiles to create files\"\n  exit 1\nfi\n\n$JS7_YADE_BIN \\\n    -profile $YADE_PROFILE \\\n    -file_path $YADE_FILE_PATH \\\n    -operation=move \\\n    -java-options \"-Xms32m\" \"-Xmx64m\"\n",
+        "env" : {
+          "YADE_PROFILE" : "\"move_to_demo_file_path_sftp\"",
+          "YADE_FILE_PATH" : "$file"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 10,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Pick up files by File Watching and transfer files with YADE"
+    }
+  }
+}

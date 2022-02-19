@@ -1,0 +1,263 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Passing variables from forked branches",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdVariablesFork",
+  "orderPreparation" : {
+    "parameters" : {
+      "booking_code" : {
+        "type" : "String",
+        "default" : "'XYZ45'"
+      },
+      "flight_destination" : {
+        "type" : "String",
+        "default" : "'India'"
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Fork",
+    "branches" : [ {
+      "id" : "branch1",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1a",
+          "label" : "job2_1a"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1b",
+          "label" : "job2_1b"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1c",
+          "label" : "job2_1c"
+        } ]
+      }
+    }, {
+      "id" : "branch2",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2a",
+          "label" : "job2_2a"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2b",
+          "label" : "job2_2b"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2c",
+          "label" : "job2_2c"
+        } ]
+      }
+    }, {
+      "id" : "branch3",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_3a",
+          "label" : "job2_3a"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_3b",
+          "label" : "job2_3b"
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_3c",
+          "label" : "job2_3c"
+        } ]
+      }
+    } ],
+    "joinIfFailed" : false
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "job3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nNEW_BOOKING_CODE=\"XYZ45\"\nNEW_FLIGHT_DESTINATION=\"Sydney\"\n\necho \"modifying booking code: $NEW_BOOKING_CODE\"\necho \"new_booking_code=$NEW_BOOKING_CODE\" >> $JS7_RETURN_VALUES\n\necho \"modifying flight destination: $NEW_FLIGHT_DESTINATION\"\necho \"new_flight_destination=$NEW_FLIGHT_DESTINATION\" >> $JS7_RETURN_VALUES\n\nsleep 5\n",
+        "env" : {
+          "BOOKING_CODE" : "$booking_code",
+          "FLIGHT_DESTINATION" : "$flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b" : {
+      "agentName" : "secondaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nNEW_BOOKING_CODE=\"XYZ45\"\nNEW_FLIGHT_DESTINATION=\"San Francisco\"\n\necho \"modifying booking code: $NEW_BOOKING_CODE\"\necho \"new_booking_code=$NEW_BOOKING_CODE\" >> $JS7_RETURN_VALUES\n\necho \"modifying flight destination: $NEW_FLIGHT_DESTINATION\"\necho \"new_flight_destination=$NEW_FLIGHT_DESTINATION\" >> $JS7_RETURN_VALUES\n\nsleep 5\n",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2a" : {
+      "agentName" : "secondaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nNEW_BOOKING_CODE=\"XYZ45\"\nNEW_FLIGHT_DESTINATION=\"London\"\n\necho \"modifying booking code: $NEW_BOOKING_CODE\"\necho \"new_booking_code=$NEW_BOOKING_CODE\" >> $JS7_RETURN_VALUES\n\necho \"modifying flight destination: $NEW_FLIGHT_DESTINATION\"\necho \"new_flight_destination=$NEW_FLIGHT_DESTINATION\" >> $JS7_RETURN_VALUES\n\nsleep 5\n",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2c" : {
+      "agentName" : "secondaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_3a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_3b" : {
+      "agentName" : "secondaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nNEW_BOOKING_CODE=\"XYZ45\"\nNEW_FLIGHT_DESTINATION=\"Rome\"\n\necho \"modifying booking code: $NEW_BOOKING_CODE\"\necho \"new_booking_code=$NEW_BOOKING_CODE\" >> $JS7_RETURN_VALUES\n\necho \"modifying flight destination: $NEW_FLIGHT_DESTINATION\"\necho \"new_flight_destination=$NEW_FLIGHT_DESTINATION\" >> $JS7_RETURN_VALUES\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_3c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\necho \"reading booking code from order variable: BOOKING_CODE = $BOOKING_CODE\"\necho \"reading flight destination from order variable: FLIGHT_DESTINATION = $FLIGHT_DESTINATION\"\n\nsleep 5",
+        "env" : {
+          "BOOKING_CODE" : "$new_booking_code",
+          "FLIGHT_DESTINATION" : "$new_flight_destination"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

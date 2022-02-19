@@ -1,0 +1,78 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "orderPreparation" : {
+    "parameters" : {
+      "countries" : {
+        "type" : "List",
+        "listParameters" : {
+          "countryCode" : {
+            "type" : "String"
+          },
+          "countryName" : {
+            "type" : "String"
+          },
+          "countryLanguage" : {
+            "type" : "String"
+          }
+        }
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "ForkList",
+    "children" : "countries",
+    "childToId" : "countryCode",
+    "workflow" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job1",
+        "label" : "job1"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2",
+        "label" : "job2"
+      } ]
+    },
+    "joinIfFailed" : false
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"country code: $COUNTRY_CODE\"\necho \"country name: $COUNTRY_NAME\"\necho \"country language: $COUNTRY_LANGUAGE\"\n\nsleep 5",
+        "env" : {
+          "COUNTRY_CODE" : "$countryCode",
+          "COUNTRY_NAME" : "$countryName",
+          "COUNTRY_LANGUAGE" : "$countryLanguage"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 100,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"job running for country code: $COUNTRY_CODE\"\necho \"job running for country name: $COUNTRY_NAME\"\necho \"country language: $COUNTRY_LANGUAGE\"\n\nsleep 5",
+        "env" : {
+          "COUNTRY_CODE" : "$countryCode",
+          "COUNTRY_NAME" : "$countryName",
+          "COUNTRY_LANGUAGE" : "$countryLanguage"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 100,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

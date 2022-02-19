@@ -1,0 +1,141 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Execute jobs depending on dynamic job results",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdConditionalReturnCode",
+  "orderPreparation" : {
+    "parameters" : {
+      "return_code_job1" : {
+        "type" : "Number",
+        "default" : "0"
+      },
+      "return_code_job2" : {
+        "type" : "Number",
+        "default" : "0"
+      },
+      "return_code_job3" : {
+        "type" : "Number",
+        "default" : "0"
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "If",
+    "predicate" : "variable( 'returnCode' ) == 0",
+    "then" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2",
+        "label" : "job2"
+      } ]
+    },
+    "else" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job3",
+        "label" : "job3"
+      } ]
+    }
+  }, {
+    "TYPE" : "If",
+    "predicate" : "$returnCode.toNumber == 0",
+    "then" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job4",
+        "label" : "job4"
+      } ]
+    }
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job5",
+    "label" : "job5"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5\n\nexit $RETURN_CODE_JOB1",
+        "env" : {
+          "RETURN_CODE_JOB1" : "$return_code_job1"
+        },
+        "v1Compatible" : false,
+        "returnCodeMeaning" : {
+          "success" : [ 0, 1, 2, 3, 4 ]
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5\n\nexit $RETURN_CODE_JOB2\n",
+        "env" : {
+          "RETURN_CODE_JOB2" : "$return_code_job2"
+        },
+        "v1Compatible" : false,
+        "returnCodeMeaning" : {
+          "success" : [ 0, 1, 2, 3, 4 ]
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5\n\nexit $RETURN_CODE_JOB3",
+        "env" : {
+          "RETURN_CODE_JOB3" : "$return_code_job3"
+        },
+        "v1Compatible" : false,
+        "returnCodeMeaning" : {
+          "success" : [ 0, 1, 2, 3, 4 ]
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job4" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5\n",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job5" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5\n",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

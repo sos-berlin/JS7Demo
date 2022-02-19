@@ -1,0 +1,42 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Create files for pick up by file watching",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdFileWatchingForkTouch",
+  "orderPreparation" : {
+    "parameters" : {
+      "num_of_files" : {
+        "type" : "Number",
+        "default" : "5"
+      }
+    },
+    "allowUndeclared" : false
+  },
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "touchFiles",
+    "label" : "touchFiles"
+  } ],
+  "jobs" : {
+    "touchFiles" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nif [ $NUM_OF_FILES -lt 1 ]\nthen\n  NUM_OF_FILES=1\nfi\n\nif [ $NUM_OF_FILES -gt 10 ]\nthen\n  NUM_OF_FILES=10\nfi\n\nfor ((i=1; i<=$NUM_OF_FILES; i++)); do\n   echo \"creating file: ${WATCH_DIRECTORY}/${i}${FILE_EXTENSION}\"\n   touch ${WATCH_DIRECTORY}/${i}${FILE_EXTENSION}\ndone\n",
+        "env" : {
+          "NUM_OF_FILES" : "$num_of_files",
+          "FILE_EXTENSION" : "\"-JS7Demo.txt\"",
+          "WATCH_DIRECTORY" : "\"/var/sos-berlin.com/files/productdemo/incoming/txt\""
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Create files for pick up by file watching"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "TYPE" : "FileWatch",
+  "version" : "1.1.0",
+  "workflowName" : "jdFileWatchingFork",
+  "agentName" : "primaryAgent",
+  "directoryExpr" : "'/var/sos-berlin.com/files/productdemo/incoming/txt'",
+  "pattern" : ".*-JS7Demo\\.txt",
+  "timeZone" : "Etc/UTC",
+  "delay" : 2,
+  "title" : "Watch for incoming .txt files"
+}

@@ -1,0 +1,103 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Retries execution of failed jobs",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jsReTry",
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Try",
+    "try" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_a",
+        "label" : "job2_a"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_b",
+        "label" : "job2_b"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_c",
+        "label" : "job2_c"
+      } ]
+    },
+    "catch" : {
+      "instructions" : [ {
+        "TYPE" : "Retry"
+      } ]
+    },
+    "maxTries" : 10,
+    "retryDelays" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "job3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nif [ $JS7_JOB_EXECUTION_COUNT -eq 1 ]\nthen\n  # in case of first execution of this job create an odd number\n  random_num=1\nelse\n  # in case of repeated execution create a random number\n  random_num=$RANDOM\nfi\n\necho \"random number: $random_num\"\n\n# if an odd number is generated then raise an error and retry the job sequence\nif [ $(( random_num % 2)) -eq 0 ]\nthen\n    echo \"job successful for even random number: $random_num\"\n    exit 0\nelse\n    echo \"job failed for odd random number: $random_num\"\n\texit 1\nfi\n",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

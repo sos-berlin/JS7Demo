@@ -1,0 +1,57 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Execute remote SSH command and display results",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-AgentlessScheduling",
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "execute-ssh",
+    "label" : "execute-ssh"
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "display-results",
+    "label" : "display-results"
+  } ],
+  "jobs" : {
+    "execute-ssh" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.ssh.SSHJob",
+        "arguments" : {
+          "host" : "\"172.17.0.1\"",
+          "port" : "22",
+          "user" : "\"js\"",
+          "auth_method" : "\"publickey\"",
+          "auth_file" : "\"/var/sos-berlin.com/js7/agent/var_4445/config/id_rsa\"",
+          "log_level" : "\"info\"",
+          "command" : "'echo \"printing environment variables\"\nprintenv\necho \"adding hostname $HOSTNAME to variable remote_hostname\"\necho \"remote_hostname=$HOSTNAME\" >> $JS7_RETURN_VALUES'",
+          "create_env_vars" : "true"
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Execute SSH remote command and provide return values"
+    },
+    "display-results" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"remote hostname: $REMOTE_HOSTNAME\"",
+        "env" : {
+          "REMOTE_HOSTNAME" : "$remote_hostname"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Display Results"
+    }
+  }
+}

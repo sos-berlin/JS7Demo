@@ -1,0 +1,134 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Handles failed jobs by executing recovery jobs",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdTryCatch",
+  "jobResourceNames" : [ "Default", "eMailDefault", "eMailOnFailure" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Try",
+    "try" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_a",
+        "label" : "job2_a"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_b",
+        "label" : "job2_b"
+      } ]
+    },
+    "catch" : {
+      "instructions" : [ {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_c",
+        "label" : "job2_c"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "send-mail",
+        "label" : "send-mail"
+      }, {
+        "TYPE" : "Execute.Named",
+        "jobName" : "job2_d",
+        "label" : "job2_d"
+      } ]
+    }
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "job3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nORDER_ID_URLENC=$(echo -n $JS7_ORDER_ID | od -An -tx1 | tr ' ' % | xargs printf \"%s\")\nWORKFLOW_NAME_URLENC=$(echo -n $JS7_WORKFLOW_NAME | od -An -tx1 | tr ' ' % | xargs printf \"%s\")\n\necho \"orderIdUrlEnc=$ORDER_ID_URLENC\" >> $JS7_RETURN_VALUES\necho \"workflowNameUrlEnc=$WORKFLOW_NAME_URLENC\" >> $JS7_RETURN_VALUES\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "send-mail" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.mail.MailJob",
+        "arguments" : {
+          "to" : "\"info@sos-berlin.com\"",
+          "body" : "\"<style type='text/css'>.tg  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;}.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;}\n</style>\n<table class='tg'>\n\t<tbody>\n\t\t<tr>\n\t\t\t<th colspan='2'>JS7 JobScheduler</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Controller ID</td>\n\t\t\t<td>${js7ControllerId}</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<th colspan='2'>Order</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Order ID</td>\n                        <td><a href='$(JobResource:Default:js7JocUrl)/joc/#/history/order?orderId=${orderIdUrlEnc}&workflow=${workflowNameUrlEnc}&controllerId=${js7ControllerId}'>${js7OrderId}</a></td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Workflow</td>\n                        <td><a href='$(JobResource:Default:js7JocUrl)/joc/#/workflows/workflow?path=${workflowNameUrlEnc}&controllerId=${js7ControllerId}'>${js7WorkflowPath}</a></td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Node Label</td>\n\t\t\t<td>${js7Label}</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>Job</td>\n\t\t\t<td>${js7JobName}</td>\n\t\t</tr>\n\t</tbody>\n</table>\""
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_d" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\n# create a random number\nrandom_num=$RANDOM\necho \"random number: $random_num\"\n\n# if an odd number is generated then raise an error and fail this job\nif [ $(( random_num % 2)) -eq 0 ]\nthen\n    echo \"job successful for even random number: $random_num\"\n\texit 0\nelse\n    echo \"job failed for odd random number: $random_num\"\n\texit 1\nfi",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

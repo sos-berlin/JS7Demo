@@ -1,0 +1,164 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Use of shared resource locks to allow parallelism",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdSharedLockParallel",
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Fork",
+    "branches" : [ {
+      "id" : "smallLock",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Lock",
+          "lockName" : "jdLockSmall",
+          "lockedWorkflow" : {
+            "instructions" : [ {
+              "TYPE" : "Execute.Named",
+              "jobName" : "job2_1a",
+              "label" : "step2_1a"
+            }, {
+              "TYPE" : "Execute.Named",
+              "jobName" : "job2_1b",
+              "label" : "step2_1b"
+            } ]
+          },
+          "count" : 1
+        } ]
+      }
+    }, {
+      "id" : "bigLock",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Lock",
+          "lockName" : "jdLockBig",
+          "lockedWorkflow" : {
+            "instructions" : [ {
+              "TYPE" : "Try",
+              "try" : {
+                "instructions" : [ {
+                  "TYPE" : "Execute.Named",
+                  "jobName" : "job2_2a",
+                  "label" : "step2_2a"
+                }, {
+                  "TYPE" : "Execute.Named",
+                  "jobName" : "job2_2b",
+                  "label" : "step2_2b"
+                }, {
+                  "TYPE" : "Execute.Named",
+                  "jobName" : "job2_2c",
+                  "label" : "step2_2c"
+                } ]
+              },
+              "catch" : {
+                "instructions" : [ {
+                  "TYPE" : "Retry"
+                } ]
+              },
+              "maxTries" : 10,
+              "retryDelays" : [ 10 ]
+            } ]
+          },
+          "count" : 5
+        } ]
+      }
+    } ],
+    "joinIfFailed" : false
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "step3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 8",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"small lock acquired\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"small lock acquired\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"big lock acquired\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"big lock acquired\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "jobClass" : "/jobClass1"
+    },
+    "job2_2c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\necho \"big lock acquired\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

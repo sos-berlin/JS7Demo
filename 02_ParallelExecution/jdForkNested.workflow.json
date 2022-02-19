@@ -1,0 +1,305 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "title" : "Nested parallel execution of jobs in a workflow",
+  "documentationName" : "PKB-JS7-OnlineDemo-Workflow-jdForkNested",
+  "jobResourceNames" : [ "Default" ],
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job1",
+    "label" : "job1"
+  }, {
+    "TYPE" : "Fork",
+    "branches" : [ {
+      "id" : "branch1",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1a",
+          "label" : "job2_1a"
+        }, {
+          "TYPE" : "Fork",
+          "branches" : [ {
+            "id" : "branch1b",
+            "workflow" : {
+              "instructions" : [ {
+                "TYPE" : "Execute.Named",
+                "jobName" : "job2_1b",
+                "label" : "job2_1b"
+              }, {
+                "TYPE" : "Fork",
+                "branches" : [ {
+                  "id" : "branch1b_1",
+                  "workflow" : {
+                    "instructions" : [ {
+                      "TYPE" : "Execute.Named",
+                      "jobName" : "job2_1b_1",
+                      "label" : "job2_1b_1"
+                    } ]
+                  }
+                }, {
+                  "id" : "branch1_b2",
+                  "workflow" : {
+                    "instructions" : [ {
+                      "TYPE" : "Execute.Named",
+                      "jobName" : "job2_1b_2",
+                      "label" : "job2_1b_2"
+                    } ]
+                  }
+                } ],
+                "joinIfFailed" : false
+              } ]
+            }
+          }, {
+            "id" : "branch1c",
+            "workflow" : {
+              "instructions" : [ {
+                "TYPE" : "Execute.Named",
+                "jobName" : "job2_1c",
+                "label" : "job2_1c"
+              } ]
+            }
+          } ],
+          "joinIfFailed" : false
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_1d",
+          "label" : "job2_1d"
+        } ]
+      }
+    }, {
+      "id" : "branch2",
+      "workflow" : {
+        "instructions" : [ {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2a",
+          "label" : "job2_2a"
+        }, {
+          "TYPE" : "Fork",
+          "branches" : [ {
+            "id" : "branch2b",
+            "workflow" : {
+              "instructions" : [ {
+                "TYPE" : "Execute.Named",
+                "jobName" : "job2_2b",
+                "label" : "job2_2b"
+              }, {
+                "TYPE" : "Fork",
+                "branches" : [ {
+                  "id" : "branch2b_1",
+                  "workflow" : {
+                    "instructions" : [ {
+                      "TYPE" : "Execute.Named",
+                      "jobName" : "job2_2b_1",
+                      "label" : "job2_2b_1"
+                    } ]
+                  }
+                }, {
+                  "id" : "branch2b_2",
+                  "workflow" : {
+                    "instructions" : [ {
+                      "TYPE" : "Execute.Named",
+                      "jobName" : "job2_2b_2",
+                      "label" : "job2_2b_2"
+                    } ]
+                  }
+                } ],
+                "joinIfFailed" : false
+              } ]
+            }
+          }, {
+            "id" : "branch2c",
+            "workflow" : {
+              "instructions" : [ {
+                "TYPE" : "Execute.Named",
+                "jobName" : "job2_2c",
+                "label" : "job2_2c"
+              } ]
+            }
+          } ],
+          "joinIfFailed" : false
+        }, {
+          "TYPE" : "Execute.Named",
+          "jobName" : "job2_2d",
+          "label" : "job2_2d"
+        } ]
+      }
+    } ],
+    "joinIfFailed" : false
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "job3",
+    "label" : "job3"
+  } ],
+  "jobs" : {
+    "job1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"using workflow: $JS7_WORKFLOW_NAME\"\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 10",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b_1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1b_2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_1d" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2a" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b_1" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2b_2" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2c" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job2_2d" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "job3" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"running job: $JS7_JOB_NAME\"\n\nsleep 5",
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    }
+  }
+}

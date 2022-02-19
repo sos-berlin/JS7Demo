@@ -1,0 +1,49 @@
+{
+  "TYPE" : "Workflow",
+  "version" : "1.1.0",
+  "timeZone" : "Etc/UTC",
+  "instructions" : [ {
+    "TYPE" : "Execute.Named",
+    "jobName" : "touch-file",
+    "label" : "touch-file"
+  }, {
+    "TYPE" : "Execute.Named",
+    "jobName" : "rename-file",
+    "label" : "rename-file"
+  } ],
+  "jobs" : {
+    "touch-file" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "ShellScriptExecutable",
+        "script" : "#!/bin/bash\n\necho \"touching file: /tmp/$ORDER_ID.order.js7\"\ntouch /tmp/$ORDER_ID.order.js7\n\necho \"creating sub-directory: /tmp/$ORDER_ID\"\nmkdir -p /tmp/$ORDER_ID\n",
+        "env" : {
+          "ORDER_ID" : "$js7OrderId"
+        },
+        "v1Compatible" : false
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false
+    },
+    "rename-file" : {
+      "agentName" : "primaryAgent",
+      "executable" : {
+        "TYPE" : "InternalExecutable",
+        "className" : "com.sos.jitl.jobs.file.RenameFileJob",
+        "arguments" : {
+          "file_spec" : "\"^${js7OrderId}\\\\.order\\\\.js7\\$\"",
+          "source_file" : "\"/tmp\"",
+          "target_file" : "\"/tmp/${js7OrderId}\""
+        }
+      },
+      "skipIfNoAdmissionForOrderDay" : false,
+      "parallelism" : 1,
+      "graceTimeout" : 15,
+      "failOnErrWritten" : false,
+      "title" : "Renames one or more files",
+      "documentationName" : "RenameFileJob"
+    }
+  }
+}
